@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block contenu %}
+
+<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:28px;">
+    <div>
+        <h1 style="font-size:22px; font-weight:800; color:#111827; margin-bottom:4px;">
+            Ajouter une nouvelle entrée
+        </h1>
+    </div>
+    <span style="color:#9ca3af; font-size:13px; font-weight:500; display:flex; align-items:center; gap:5px;">
+        <i class="bi bi-clock"></i> Brouillon sauvegardé à {{ "now"|date:"H:i" }}
+    </span>
+</div>
+
+<div class="sta-card" style="max-width:860px;">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Thématique -->
+        <div style="margin-bottom:22px;">
+            <label class="form-label-sta">Thématique <span style="color:#dc2626;">*</span></label>
+            <select name="categorie" class="form-control-sta {% if formulaire.categorie.errors %}is-invalid{% endif %}">
+                <option value="">Sélectionner une catégorie...</option>
+                {% for cat in formulaire.categorie.field.queryset %}
+                <option value="{{ cat.pk }}"
+                    {% if formulaire.categorie.value == cat.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ cat.nom }}
+                </option>
+                {% endfor %}
+            </select>
+            {% if formulaire.categorie.errors %}
+            <div class="field-error">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                {{ formulaire.categorie.errors|join:", " }}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Titre -->
+        <div style="margin-bottom:22px;">
+            <label class="form-label-sta">Titre de l'activité <span style="color:#dc2626;">*</span></label>
+            <input
+                type="text"
+                name="titre"
+                class="form-control-sta {% if formulaire.titre.errors %}is-invalid{% endif %}"
+                placeholder="Ex: Correction bug CSS sur le menu de navigation"
+                value="{{ formulaire.titre.value|default:'' }}"
+                required
+            >
+            {% if formulaire.titre.errors %}
+            <div class="field-error">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                {{ formulaire.titre.errors|join:", " }}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Contenu -->
+        <div style="margin-bottom:22px;">
+            <label class="form-label-sta">Contenu de la note <span style="color:#dc2626;">*</span></label>
+            <!-- Barre outils simulée -->
+            <div style="border:1.5px solid #e5e7eb; border-bottom:none; border-radius:10px 10px 0 0;
+                        padding:10px 14px; background:#f9fafb; display:flex; gap:14px; align-items:center;">
+                <button type="button" style="background:none;border:none;cursor:pointer;font-weight:700;color:#374151;font-size:14px;">B</button>
+                <button type="button" style="background:none;border:none;cursor:pointer;font-style:italic;color:#374151;font-size:14px;">I</button>
+                <button type="button" style="background:none;border:none;cursor:pointer;color:#374151;font-size:14px;">🔗</button>
+                <button type="button" style="background:none;border:none;cursor:pointer;color:#374151;font-size:14px;">☰</button>
+                <button type="button" style="background:none;border:none;cursor:pointer;color:#374151;font-size:13px;font-family:monospace;">&lt;/&gt;</button>
+            </div>
+            <textarea
+                name="contenu"
+                class="form-control-sta {% if formulaire.contenu.errors %}is-invalid{% endif %}"
+                placeholder="Décrivez votre activité ici..."
+                rows="10"
+                required
+                style="border-radius:0 0 10px 10px; border-top:none;"
+            >{{ formulaire.contenu.value|default:'' }}</textarea>
+            {% if formulaire.contenu.errors %}
+            <div class="field-error">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                {{ formulaire.contenu.errors|join:", " }}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Capture d'écran -->
+        <div style="margin-bottom:28px;">
+            <label class="form-label-sta">Capture d'écran (optionnel)</label>
+            <div style="display:flex; align-items:center; gap:0; margin-bottom:12px;">
+                <label style="background:#f3f4f6; border:1.5px solid #e5e7eb; border-right:none;
+                              padding:10px 16px; border-radius:8px 0 0 8px; font-size:13px;
+                              font-weight:600; cursor:pointer; color:#374151; white-space:nowrap;">
+                    Choisir un fichier
+                    <input type="file" name="image_preuve" id="imageInput" accept="image/*"
+                           style="display:none;" onchange="previewImage(this)">
+                </label>
+                <span id="fileName" style="flex:1; border:1.5px solid #e5e7eb; border-radius:0 8px 8px 0;
+                                           padding:10px 14px; font-size:13px; color:#9ca3af; background:white;">
+                    Aucun fichier choisi
+                </span>
+            </div>
+            <!-- Zone aperçu -->
+            <div id="previewZone" style="border:2px dashed #d1d5db; border-radius:12px;
+                                          min-height:140px; display:flex; flex-direction:column;
+                                          align-items:center; justify-content:center; background:#f9fafb;">
+                <i class="bi bi-image" style="font-size:28px; color:#d1d5db; margin-bottom:8px;"></i>
+                <span style="font-size:13px; color:#9ca3af; font-weight:500;">Prévisualisation de l'image</span>
+                <img id="previewImg" src="" alt="" style="display:none; max-width:100%; max-height:300px;
+                     border-radius:10px; padding:8px;">
+            </div>
+        </div>
+
+        <!-- Boutons -->
+        <div style="display:flex; gap:12px;">
+            <button type="submit" class="btn-sta-primary">
+                <i class="bi bi-check-lg"></i> Enregistrer l'entrée
+            </button>
+            <a href="{% url 'tableau-de-bord' %}" class="btn-sta-outline">
+                Annuler
+            </a>
+        </div>
+
+    </form>
+</div>
+
+<script>
+function previewImage(input) {
+    const fileName = document.getElementById('fileName');
+    const previewZone = document.getElementById('previewZone');
+    const previewImg = document.getElementById('previewImg');
+
+    if (input.files && input.files[0]) {
+        fileName.textContent = input.files[0].name;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            previewImg.style.display = 'block';
+            previewZone.querySelector('i').style.display = 'none';
+            previewZone.querySelector('span').style.display = 'none';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Rendre le label cliquable
+document.querySelector('label[for="imageInput"]') && document.querySelector('label[for="imageInput"]').addEventListener('click', function() {
+    document.getElementById('imageInput').click();
+});
+</script>
+{% endblock %}

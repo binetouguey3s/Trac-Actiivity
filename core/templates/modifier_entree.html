@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block contenu %}
+
+<a href="{% url 'entree-detail' entree.pk %}" class="btn-retour">
+    <i class="bi bi-arrow-left"></i> Retour
+</a>
+
+<div style="margin-bottom:28px;">
+    <h1 style="font-size:24px; font-weight:800; color:#111827; margin-bottom:6px;">
+        ✏️ Modifier l'entrée
+    </h1>
+    <p style="color:#9ca3af; font-size:14px; font-weight:500;">
+        Mettez à jour les informations de votre documentation technique.
+    </p>
+</div>
+
+<div class="sta-card" style="max-width:860px;">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Titre -->
+        <div style="margin-bottom:22px;">
+            <label class="form-label-sta">Titre de l'entrée</label>
+            <input
+                type="text"
+                name="titre"
+                class="form-control-sta {% if formulaire.titre.errors %}is-invalid{% endif %}"
+                value="{{ formulaire.titre.value|default:entree.titre }}"
+                required
+            >
+            {% if formulaire.titre.errors %}
+            <div class="field-error">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                {{ formulaire.titre.errors|join:", " }}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Thématique -->
+        <div style="margin-bottom:22px;">
+            <label class="form-label-sta">Thématique</label>
+            <select name="categorie" class="form-control-sta">
+                {% for cat in formulaire.categorie.field.queryset %}
+                <option value="{{ cat.pk }}"
+                    {% if entree.categorie.pk == cat.pk %}selected{% endif %}>
+                    {{ cat.nom }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Contenu -->
+        <div style="margin-bottom:22px;">
+            <label class="form-label-sta">Contenu de l'entrée</label>
+            <textarea
+                name="contenu"
+                class="form-control-sta {% if formulaire.contenu.errors %}is-invalid{% endif %}"
+                rows="10"
+                required
+            >{{ formulaire.contenu.value|default:entree.contenu }}</textarea>
+            {% if formulaire.contenu.errors %}
+            <div class="field-error">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                {{ formulaire.contenu.errors|join:", " }}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Capture d'écran -->
+        <div style="margin-bottom:28px;">
+            <label class="form-label-sta">Capture d'écran (optionnel)</label>
+
+            {% if entree.image_preuve %}
+            <!-- Image existante -->
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:10px;
+                        color:#374151; font-size:13px; font-weight:500;">
+                <i class="bi bi-paperclip" style="color:#9ca3af;"></i>
+                Fichier actuel : <strong>{{ entree.image_preuve.name|cut:"preuves/" }}</strong>
+            </div>
+            <img src="{{ entree.image_preuve.url }}" alt="Capture actuelle"
+                 style="width:100%; max-height:260px; object-fit:cover; border-radius:10px;
+                        border:2px dashed #d1d5db; margin-bottom:12px;">
+
+            <!-- Option supprimer -->
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+                <input type="checkbox" name="image_preuve-clear" id="clearImage"
+                       style="width:16px; height:16px; accent-color:#dc2626;">
+                <label for="clearImage" style="color:#dc2626; font-size:13px; font-weight:600; cursor:pointer;">
+                    Supprimer l'image actuelle
+                </label>
+            </div>
+
+            <!-- Remplacer -->
+            <a href="#" onclick="document.getElementById('replaceInput').click(); return false;"
+               style="display:inline-flex; align-items:center; gap:6px; color:#5046e5;
+                      font-size:13px; font-weight:600; text-decoration:none;">
+                <i class="bi bi-arrow-up-circle"></i> Remplacer l'image
+            </a>
+            <input type="file" name="image_preuve" id="replaceInput" accept="image/*"
+                   style="display:none;" onchange="showNewFileName(this)">
+            <span id="newFileName" style="font-size:13px; color:#9ca3af; margin-left:8px;"></span>
+
+            {% else %}
+            <!-- Pas d'image : zone upload normale -->
+            <div style="display:flex; align-items:center; gap:0; margin-bottom:12px;">
+                <label style="background:#f3f4f6; border:1.5px solid #e5e7eb; border-right:none;
+                              padding:10px 16px; border-radius:8px 0 0 8px; font-size:13px;
+                              font-weight:600; cursor:pointer; color:#374151;">
+                    Choisir un fichier
+                    <input type="file" name="image_preuve" accept="image/*" style="display:none;"
+                           onchange="previewImage(this)">
+                </label>
+                <span id="fileName" style="flex:1; border:1.5px solid #e5e7eb; border-radius:0 8px 8px 0;
+                                           padding:10px 14px; font-size:13px; color:#9ca3af; background:white;">
+                    Aucun fichier choisi
+                </span>
+            </div>
+            <div id="previewZone" style="border:2px dashed #d1d5db; border-radius:12px;
+                                          min-height:120px; display:flex; flex-direction:column;
+                                          align-items:center; justify-content:center; background:#f9fafb;">
+                <i class="bi bi-image" style="font-size:24px; color:#d1d5db; margin-bottom:6px;"></i>
+                <span style="font-size:13px; color:#9ca3af;">Aperçu de l'image</span>
+                <img id="previewImg" src="" alt="" style="display:none; max-width:100%; max-height:240px;
+                     border-radius:8px; padding:8px;">
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Boutons -->
+        <div style="display:flex; justify-content:flex-end; gap:12px; padding-top:16px;
+                    border-top:1px solid #f3f4f6;">
+            <a href="{% url 'entree-detail' entree.pk %}" class="btn-sta-outline">
+                Annuler
+            </a>
+            <button type="submit" class="btn-sta-primary">
+                <i class="bi bi-check-lg"></i> Enregistrer les modifications
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+function showNewFileName(input) {
+    if (input.files && input.files[0]) {
+        document.getElementById('newFileName').textContent = input.files[0].name;
+    }
+}
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.getElementById('previewImg');
+            img.src = e.target.result;
+            img.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+{% endblock %}

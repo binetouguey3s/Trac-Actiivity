@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block contenu %}
+
+<!-- En-tête -->
+<div style="margin-bottom:28px;">
+    <h1 style="font-size:22px; font-weight:800; color:#111827; margin-bottom:6px;
+               display:flex; align-items:center; gap:10px;">
+        🏷️ Gérer les thématiques
+    </h1>
+    <p style="color:#9ca3af; font-size:14px; font-weight:500;">
+        Les thématiques permettent de classer vos entrées de journal.
+    </p>
+</div>
+
+<!-- Formulaire ajout -->
+<div style="background:white; border:1px solid #e5e7eb; border-radius:14px;
+            padding:24px 28px; margin-bottom:20px; max-width:820px;">
+
+    <h5 style="font-size:15px; font-weight:700; color:#111827; margin-bottom:16px;">
+        Ajouter une nouvelle thématique
+    </h5>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div style="display:flex; gap:12px; align-items:flex-start;">
+            <div style="flex:1;">
+                <input
+                    type="text"
+                    name="nom"
+                    class="form-control-sta {% if erreur %}is-invalid{% endif %}"
+                    placeholder="Bug, Amélioration, Documentation..."
+                    value="{{ request.POST.nom|default:'' }}"
+                    required
+                >
+                {% if erreur %}
+                <div class="field-error" style="margin-top:6px;">
+                    <i class="bi bi-exclamation-circle-fill" style="color:#dc2626;"></i>
+                    {{ erreur }}
+                </div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn-sta-primary" style="white-space:nowrap; padding:12px 20px;">
+                <i class="bi bi-plus-lg"></i> Ajouter
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Liste des thématiques existantes -->
+<div style="background:white; border:1px solid #e5e7eb; border-radius:14px;
+            padding:24px 28px; max-width:820px;">
+
+    <h5 style="font-size:15px; font-weight:700; color:#111827; margin-bottom:20px;">
+        Thématiques existantes ({{ categories|length }})
+    </h5>
+
+    {% if categories %}
+    <div style="display:flex; flex-direction:column; gap:0;">
+        {% for cat in categories %}
+        <div style="display:flex; align-items:center; justify-content:space-between;
+                    padding:14px 0; {% if not forloop.last %}border-bottom:1px solid #f3f4f6;{% endif %}">
+
+            <div style="display:flex; align-items:center; gap:12px;">
+                <!-- Badge coloré -->
+                <span style="display:inline-flex; align-items:center; gap:7px;
+                             font-size:12px; font-weight:700; padding:5px 12px;
+                             border-radius:20px; text-transform:uppercase; letter-spacing:0.5px;
+                             background:
+                                {% if cat.nom|lower == 'bug' %}#fee2e2{% elif cat.nom|lower == 'sprint' %}#dcfce7
+                                {% elif cat.nom|lower == 'veille' %}#dbeafe{% elif cat.nom|lower == 'amélioration' %}#fef3c7
+                                {% elif cat.nom|lower == 'documentation' %}#ede9fe{% else %}#f3f4f6{% endif %};
+                             color:
+                                {% if cat.nom|lower == 'bug' %}#dc2626{% elif cat.nom|lower == 'sprint' %}#16a34a
+                                {% elif cat.nom|lower == 'veille' %}#2563eb{% elif cat.nom|lower == 'amélioration' %}#d97706
+                                {% elif cat.nom|lower == 'documentation' %}#7c3aed{% else %}#6b7280{% endif %};">
+                    <span style="width:8px; height:8px; border-radius:50%; background:currentColor;
+                                 display:inline-block;"></span>
+                    {{ cat.nom|upper }}
+                </span>
+
+                <!-- Compteur -->
+                <span style="font-size:13px; color:#9ca3af; font-weight:500;">
+                    {{ cat.nb_entrees }} entrée{{ cat.nb_entrees|pluralize }}
+                </span>
+            </div>
+            <!--Seule le superutilisateur peut supprimer une thématique et peut voir le bouton supprimer -->
+            {% if request.user.is_superuser %}
+            <!-- Bouton supprimer -->
+            <form method="POST" action="{% url 'thematique-supprimer' cat.pk %}"
+                  style="margin:0;"
+                  onsubmit="return confirm('Supprimer la thématique « {{ cat.nom }} » ?')">
+                {% csrf_token %}
+                <button type="submit"
+                        {% if cat.nb_entrees > 0 %}disabled title="Impossible : {{ cat.nb_entrees }} entrée(s) utilisent cette thématique"{% endif %}
+                        style="display:inline-flex; align-items:center; gap:6px;
+                               border:1.5px solid {% if cat.nb_entrees == 0 %}#fecaca{% else %}#e5e7eb{% endif %};
+                               background:white;
+                               color:{% if cat.nb_entrees == 0 %}#dc2626{% else %}#9ca3af{% endif %};
+                               padding:7px 14px; border-radius:8px; font-size:13px; font-weight:600;
+                               cursor:{% if cat.nb_entrees == 0 %}pointer{% else %}not-allowed{% endif %};
+                               font-family:'Manrope',sans-serif; transition:all 0.15s;">
+                    <i class="bi bi-trash3"></i> Supprimer
+                </button>
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% else %}
+    <!-- État vide -->
+    <div style="text-align:center; padding:40px 20px;">
+        <i class="bi bi-tags" style="font-size:32px; color:#d1d5db; display:block; margin-bottom:12px;"></i>
+        <p style="color:#9ca3af; font-size:14px; font-weight:500;">
+            Aucune thématique créée. Commencez par en ajouter une.
+        </p>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

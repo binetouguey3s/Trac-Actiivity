@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block public %}
+<div class="public-page">
+    <div class="auth-card">
+
+        <div style="text-align:center; margin-bottom:36px;">
+            <h1 style="font-size:32px; font-weight:800; color:#5046e5; margin-bottom:8px;">
+                Trac'Activity
+            </h1>
+            <p style="color:#9ca3af; font-size:14px; font-weight:500;">
+                Système de Traçabilité d'Activité
+            </p>
+        </div>
+
+        {% if messages %}
+        <div style="margin-bottom:20px;">
+            {% for message in messages %}
+            <div class="{% if message.tags == 'success' %}sta-alert-success{% elif message.tags == 'info' %}sta-alert-info{% else %}sta-alert-error{% endif %}" style="margin-bottom:8px;">
+                <i class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'info' %}info-circle{% else %}exclamation-circle{% endif %}-fill"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-size:14px; font-weight:600; color:#374151; margin-bottom:8px;">
+                    Nom d'utilisateur
+                </label>
+                <input
+                    type="text"
+                    name="username"
+                    class="form-control-sta"
+                    placeholder="Entrez votre nom d'utilisateur"
+                    required autofocus
+                    value="{{ request.POST.username }}"
+                >
+            </div>
+
+            <div style="margin-bottom:24px;">
+                <label style="display:block; font-size:14px; font-weight:600; color:#374151; margin-bottom:8px;">
+                    Mot de passe
+                </label>
+                <div style="position:relative;">
+                    <input
+                        type="password"
+                        name="password"
+                        id="passwordField"
+                        class="form-control-sta"
+                        placeholder="••••••••"
+                        required
+                        style="padding-right:44px;"
+                    >
+                    <button
+                        type="button"
+                        onclick="togglePassword()"
+                        style="position:absolute;right:14px;top:50%;transform:translateY(-50%);
+                               background:none;border:none;cursor:pointer;color:#9ca3af;padding:0;"
+                    >
+                        <i class="bi bi-eye-slash" id="eyeIcon" style="font-size:16px;"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-sta-primary" style="width:100%; justify-content:center; padding:13px; font-size:15px;">
+                Se connecter
+            </button>
+
+            {% if form.errors or error %}
+            <div class="sta-alert-error" style="margin-top:16px;">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                Identifiants incorrects. Veuillez réessayer.
+            </div>
+            {% endif %}
+
+        </form>
+
+        <div style="display:flex;align-items:center;gap:12px;margin:24px 0;">
+            <hr style="flex:1;border-color:#e5e7eb;">
+            <span style="color:#9ca3af;font-size:13px;font-weight:500;">ou</span>
+            <hr style="flex:1;border-color:#e5e7eb;">
+        </div>
+
+        <p style="text-align:center; color:#6b7280; font-size:14px; font-weight:500;">
+            Pas encore de compte ?
+            <a href="{% url 'inscription' %}" style="color:#5046e5; font-weight:700; text-decoration:none;">
+                Créer un compte →
+            </a>
+        </p>
+
+    </div>
+</div>
+
+<script>
+function togglePassword() {
+    const field = document.getElementById('passwordField');
+    const icon = document.getElementById('eyeIcon');
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.className = 'bi bi-eye';
+    } else {
+        field.type = 'password';
+        icon.className = 'bi bi-eye-slash';
+    }
+}
+</script>
+{% endblock %}

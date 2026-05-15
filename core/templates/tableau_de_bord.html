@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block contenu %}
+
+<!-- STAT CARDS -->
+<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px;">
+
+    <div class="stat-card">
+        <div>
+            <div class="stat-label">Total mes entrées</div>
+            <div class="stat-value">{{ total_entrees|default:"0" }}</div>
+        </div>
+        <div class="stat-icon"><i class="bi bi-folder2-open"></i></div>
+    </div>
+
+    <div class="stat-card">
+        <div>
+            <div class="stat-label">Ce mois</div>
+            <div class="stat-value">{{ entrees_mois|default:"0"|stringformat:"02d" }}</div>
+        </div>
+        <div class="stat-icon"><i class="bi bi-calendar-check"></i></div>
+    </div>
+
+    <div class="stat-card">
+        <div>
+            <div class="stat-label">Thématiques</div>
+            <div class="stat-value">{{ nb_categories|default:"0" }}</div>
+        </div>
+        <div class="stat-icon"><i class="bi bi-tags"></i></div>
+    </div>
+
+</div>
+
+<!-- HEADER LISTE -->
+<div style="display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:24px;">
+    <div>
+        <h2 style="font-size:22px; font-weight:800; color:#111827; margin-bottom:4px;">
+            Mes entrées de journal
+        </h2>
+        <p style="color:#9ca3af; font-size:14px; font-weight:500;">
+            Gérez et consultez vos activités archivées dans le système.
+        </p>
+    </div>
+    <a href="{% url 'entree-creer' %}" class="btn-sta-primary" style="white-space:nowrap;">
+        <i class="bi bi-plus-lg"></i> Nouvelle entrée
+    </a>
+</div>
+
+<!-- GRILLE DES ENTREES -->
+{% if entrees %}
+<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:36px;">
+    {% for entree in entrees %}
+    <div class="sta-card" style="display:flex; flex-direction:column; gap:12px;">
+
+        <!-- Badge + icône image -->
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span class="badge-theme badge-{{ entree.categorie.nom|lower }}">
+                {{ entree.categorie.nom }}
+            </span>
+            {% if entree.image_preuve %}
+            <i class="bi bi-image" style="color:#9ca3af; font-size:15px;" title="Capture d'écran jointe"></i>
+            {% endif %}
+        </div>
+
+        <!-- Titre -->
+        <h5 style="font-size:15px; font-weight:700; color:#111827; line-height:1.4; margin:0;">
+            {{ entree.titre }}
+        </h5>
+
+        <!-- Date -->
+        <p style="font-size:12px; color:#9ca3af; font-weight:500; margin:0;">
+            {{ entree.date_publication|date:"d F Y" }}
+        </p>
+
+        <!-- Extrait -->
+        <p style="font-size:13px; color:#6b7280; line-height:1.6; margin:0;
+                  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
+            {{ entree.contenu|truncatewords:20 }}
+        </p>
+
+        <!-- Boutons -->
+        <div style="display:flex; gap:8px; margin-top:auto; padding-top:8px; border-top:1px solid #f3f4f6;">
+            <a href="{% url 'entree-detail' entree.pk %}"
+               style="flex:1; text-align:center; border:1.5px solid #5046e5; color:#5046e5;
+                      padding:7px; border-radius:8px; font-size:13px; font-weight:700;
+                      text-decoration:none; transition:all 0.15s;"
+               onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background='white'">
+                Voir
+            </a>
+            <a href="{% url 'entree-modifier' entree.pk %}"
+               style="flex:1; text-align:center; border:1.5px solid #e5e7eb; color:#374151;
+                      padding:7px; border-radius:8px; font-size:13px; font-weight:700;
+                      text-decoration:none; transition:all 0.15s;"
+               onmouseover="this.style.borderColor='#9ca3af'" onmouseout="this.style.borderColor='#e5e7eb'">
+                Modifier
+            </a>
+            <a href="{% url 'entree-supprimer' entree.pk %}"
+               style="flex:1; text-align:center; border:1.5px solid #fee2e2; color:#dc2626;
+                      padding:7px; border-radius:8px; font-size:13px; font-weight:700;
+                      text-decoration:none; transition:all 0.15s;"
+               onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='white'">
+                Supprimer
+            </a>
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+
+<!-- PAGINATION -->
+{% if afficher_pagination %}
+<div style="display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:8px;">
+    <div class="sta-pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">
+            <i class="bi bi-chevron-left" style="font-size:13px;"></i>
+        </a>
+        {% endif %}
+
+        {% for num in paginator.page_range %}
+        {% if page_obj.number == num %}
+        <span class="active">{{ num }}</span>
+        {% else %}
+        <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">
+            <i class="bi bi-chevron-right" style="font-size:13px;"></i>
+        </a>
+        {% endif %}
+    </div>
+    <p style="font-size:13px; color:#9ca3af; font-weight:500;">
+        Affichage de {{ page_obj.start_index }} à {{ page_obj.end_index }} sur {{ paginator.count }} entrées
+    </p>
+</div>
+{% endif %}
+
+{% else %}
+<!-- ÉTAT VIDE -->
+<div style="text-align:center; padding:80px 20px;">
+    <div style="width:72px; height:72px; background:#eef2ff; border-radius:20px;
+                display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+        <i class="bi bi-journal-text" style="font-size:32px; color:#5046e5;"></i>
+    </div>
+    <h3 style="font-size:18px; font-weight:700; color:#111827; margin-bottom:8px;">
+        Aucune entrée pour le moment
+    </h3>
+    <p style="color:#9ca3af; font-size:14px; margin-bottom:24px;">
+        Commencez par créer votre première entrée de journal.
+    </p>
+    <a href="{% url 'entree-creer' %}" class="btn-sta-primary">
+        <i class="bi bi-plus-lg"></i> Créer ma première entrée
+    </a>
+</div>
+{% endif %}
+
+{% endblock %}

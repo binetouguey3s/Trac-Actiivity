@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block public %}
+<div class="public-page">
+    <div class="auth-card" style="max-width:480px;">
+
+        <div style="text-align:center; margin-bottom:36px;">
+            <h1 style="font-size:28px; font-weight:800; color:#111827; margin-bottom:8px;">
+                Créer un compte
+            </h1>
+            <p style="color:#9ca3af; font-size:14px; font-weight:500;">
+                Rejoignez la plateforme Trac'Activity
+            </p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Nom d'utilisateur -->
+            <div style="margin-bottom:18px;">
+                <label style="display:block; font-size:14px; font-weight:600; color:#374151; margin-bottom:8px;">
+                    Nom d'utilisateur
+                </label>
+                <input
+                    type="text"
+                    name="username"
+                    class="form-control-sta {% if formulaire.username.errors %}is-invalid{% endif %}"
+                    placeholder="Choisissez un identifiant"
+                    value="{{ formulaire.username.value|default:'' }}"
+                    required autofocus
+                >
+                {% if formulaire.username.errors %}
+                <div class="field-error">
+                    <i class="bi bi-exclamation-circle-fill" style="color:#dc2626;"></i>
+                    {{ formulaire.username.errors|join:", " }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Email -->
+            <div style="margin-bottom:18px;">
+                <label style="display:block; font-size:14px; font-weight:600; color:#374151; margin-bottom:8px;">
+                    Adresse email
+                </label>
+                <input
+                    type="email"
+                    name="email"
+                    class="form-control-sta {% if formulaire.email.errors %}is-invalid{% endif %}"
+                    placeholder="exemple@mail.com"
+                    value="{{ formulaire.email.value|default:'' }}"
+                >
+                {% if formulaire.email.errors %}
+                <div class="field-error">
+                    <i class="bi bi-exclamation-circle-fill" style="color:#dc2626;"></i>
+                    {{ formulaire.email.errors|join:", " }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Mot de passe -->
+            <div style="margin-bottom:18px;">
+                <label style="display:block; font-size:14px; font-weight:600; color:#374151; margin-bottom:8px;">
+                    Mot de passe
+                </label>
+                <input
+                    type="password"
+                    name="password1"
+                    class="form-control-sta {% if formulaire.password1.errors %}is-invalid{% endif %}"
+                    placeholder="Minimum 8 caractères"
+                    required
+                >
+                {% if formulaire.password1.errors %}
+                <div class="field-error">
+                    <i class="bi bi-exclamation-circle-fill" style="color:#dc2626;"></i>
+                    {{ formulaire.password1.errors|join:", " }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Confirmer mot de passe -->
+            <div style="margin-bottom:28px;">
+                <label style="display:block; font-size:14px; font-weight:600; color:#374151; margin-bottom:8px;">
+                    Confirmer le mot de passe
+                </label>
+                <input
+                    type="password"
+                    name="password2"
+                    class="form-control-sta {% if formulaire.password2.errors %}is-invalid{% endif %}"
+                    placeholder="Répétez votre mot de passe"
+                    required
+                >
+                {% if formulaire.password2.errors %}
+                <div class="field-error">
+                    <i class="bi bi-exclamation-circle-fill" style="color:#dc2626;"></i>
+                    {{ formulaire.password2.errors|join:", " }}
+                </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-sta-primary" style="width:100%; justify-content:center; padding:13px; font-size:15px;">
+                S'inscrire
+            </button>
+
+        </form>
+
+        <p style="text-align:center; color:#6b7280; font-size:14px; font-weight:500; margin-top:24px;">
+            Déjà un compte ?
+            <a href="{% url 'connexion' %}" style="color:#5046e5; font-weight:700; text-decoration:none;">
+                Se connecter →
+            </a>
+        </p>
+
+    </div>
+</div>
+{% endblock %}
