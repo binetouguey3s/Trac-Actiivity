@@ -1,8 +1,7 @@
 from django.urls import path
 from .views import (
     InscriptionView, ConnexionView, DeconnexionView, TableauDeBordView,
-    DetailEntreeView, CreerEntreeView, ModifierEntreeView, SupprimerEntreeView,
-    ThematiquesView, SupprimerCategorieView
+    DetailEntreeView, CreerEntreeView, ModifierEntreeView, SupprimerEntreeView, ThematiquesView, SupprimerCategorieView
 )
 
 urlpatterns = [

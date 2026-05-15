@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block contenu %}
-
+{% if request.user.is_superuser %}
 <!-- En-tête -->
 <div style="margin-bottom:28px;">
     <h1 style="font-size:22px; font-weight:800; color:#111827; margin-bottom:6px;
@@ -13,14 +13,16 @@
     </p>
 </div>
 
+
 <!-- Formulaire ajout -->
 <div style="background:white; border:1px solid #e5e7eb; border-radius:14px;
             padding:24px 28px; margin-bottom:20px; max-width:820px;">
-
+    
     <h5 style="font-size:15px; font-weight:700; color:#111827; margin-bottom:16px;">
         Ajouter une nouvelle thématique
     </h5>
 
+    
     <form method="POST">
         {% csrf_token %}
         <div style="display:flex; gap:12px; align-items:flex-start;">
@@ -46,6 +48,7 @@
         </div>
     </form>
 </div>
+{% endif %}
 
 <!-- Liste des thématiques existantes -->
 <div style="background:white; border:1px solid #e5e7eb; border-radius:14px;
@@ -119,5 +122,4 @@
     {% endif %}
 
 </div>
-
 {% endblock %}
