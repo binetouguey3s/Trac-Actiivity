@@ -1,8 +1,8 @@
-# Trac-Activity 📊
+# Trac-Activity 
 
 Système de traçabilité d'activité en ligne permettant aux utilisateurs de créer, modifier et supprimer des entrées d'activité avec catégorisation par thématiques.
 
-## 🎯 Fonctionnalités
+##  Fonctionnalités
 
 - **Authentification** : Inscription et connexion sécurisées
 - **Dashboard** : Vue d'ensemble de toutes vos activités
@@ -11,14 +11,14 @@ Système de traçabilité d'activité en ligne permettant aux utilisateurs de cr
 - **Preuves jointes** : Possibilité d'ajouter des images/photos en tant que preuves
 - **Pagination** : Navigation facile entre les entrées
 
-## 🛠️ Stack Technique
+##  Stack Technique
 
 - **Backend** : Django (Python)
 - **Frontend** : HTML5, CSS, Bootstrap
-- **Base de données** : SQLite (par défaut)
+- **Base de données** : MySQL
 - **Gestion des fichiers** : Support des uploads d'images
 
-## 📋 Installation
+##  Installation
 
 ```bash
 # 1. Cloner le projet
@@ -26,10 +26,7 @@ git clone https://github.com/binetouguey3s/Trac-Actiivity.git
 cd Trac-Actiivity
 
 # 2. Créer un environnement virtuel
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# ou
-venv\Scripts\activate  # Windows
+# venv\Scripts\activate  # Windows
 
 # 3. Installer les dépendances
 pip install -r requirements.txt
@@ -43,7 +40,7 @@ python manage.py runserver
 
 Accédez à l'application sur `http://localhost:8000`
 
-## 📁 Structure du Projet
+##  Structure du Projet
 
 ```
 Trac-Actiivity/
@@ -58,10 +55,8 @@ Trac-Actiivity/
 └── requirements.txt     # Dépendances
 ```
 
-## 👤 Auteur
+##  Auteur
 
 - **binetouguey3s**
 
-## 📝 Licence
 
-Projet personnel - Tous droits réservés
