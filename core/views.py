@@ -64,7 +64,7 @@ class TableauDeBordView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Entry
     template_name = 'tableau_de_bord.html'
     context_object_name = 'entrees'
-    paginate_by = 3
+    paginate_by = 6
     # photo de profil de l'utilisateur connecté dans le tableau de bord
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
