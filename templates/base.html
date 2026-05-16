@@ -107,6 +107,44 @@
             font-weight: 700;
         }
 
+        .profile-photo-form {
+            margin: 0;
+        }
+
+        .profile-photo-label {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: var(--indigo-light);
+            color: var(--indigo);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .profile-photo-label:hover {
+            border-color: var(--indigo);
+            box-shadow: 0 0 0 3px rgba(80,70,229,0.1);
+        }
+
+        .profile-photo-label img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-photo-label i {
+            font-size: 18px;
+        }
+
+        .profile-photo-input {
+            display: none;
+        }
+
         .btn-deconnexion {
             display: flex;
             align-items: center;
@@ -522,6 +560,17 @@
     </div>
     <div class="nav-right">
         <span class="greeting">Bonjour, <strong>{{ user.username }}</strong></span>
+        <form method="post" action="{% url 'profil-photo' %}" enctype="multipart/form-data" class="profile-photo-form">
+            {% csrf_token %}
+            <label class="profile-photo-label" title="Changer la photo de profil">
+                {% if user.profile.photo %}
+                <img src="{{ user.profile.photo.url }}" alt="Photo de profil">
+                {% else %}
+                <i class="bi bi-person"></i>
+                {% endif %}
+                <input type="file" name="photo" accept="image/*" class="profile-photo-input" onchange="this.form.submit()">
+            </label>
+        </form>
         <a href="{% url 'deconnexion' %}" class="btn-deconnexion">
             <i class="bi bi-box-arrow-right"></i> Se déconnecter
         </a>

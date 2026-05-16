@@ -1,6 +1,13 @@
 from django.db.models.signals import post_save, post_delete
+from django.contrib.auth.models import User
 from django.dispatch import receiver
-from .models import Entry
+from .models import Entry, Profile
+
+
+@receiver(post_save, sender=User)
+def creer_profil_utilisateur(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(utilisateur=instance)
 
 @receiver(post_save, sender=Entry)
 def log_creation_entree(sender, instance, created, **kwargs):

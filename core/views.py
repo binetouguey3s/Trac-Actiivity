@@ -7,8 +7,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, TemplateView, UpdateView, View
-from .forms import FormulaireCategorie, FormulaireEntree, FormulaireInscription
-from .models import Category, Entry
+from .forms import FormulaireCategorie, FormulaireEntree, FormulaireInscription, FormulaireProfil
+from .models import Category, Entry, Profile
 
 
 class InscriptionView(CreateView):
@@ -44,12 +44,33 @@ class DeconnexionView(View):
 
 
 
+class ModifierPhotoProfilView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    login_url = 'connexion'
+
+    def post(self, request, *args, **kwargs):
+        profil, _ = Profile.objects.get_or_create(utilisateur=request.user)
+        formulaire = FormulaireProfil(request.POST, request.FILES, instance=profil)
+        if formulaire.is_valid():
+            formulaire.save()
+            messages.success(request, "Photo de profil mise à jour !")
+        else:
+            messages.error(request, "Erreur lors de la mise à jour de la photo de profil.")
+        return redirect('tableau-de-bord')
+    
+
+
 class TableauDeBordView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     login_url = 'connexion'
     model = Entry
     template_name = 'tableau_de_bord.html'
     context_object_name = 'entrees'
     paginate_by = 3
+    # photo de profil de l'utilisateur connecté dans le tableau de bord
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['photo_profil'] = self.request.user.profile.photo.url if hasattr(self.request.user, 'profile') and self.request.user.profile.photo else None
+        return context
+    
 
     def test_func(self):
         return self.request.user.is_authenticated

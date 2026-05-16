@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import (
     InscriptionView, ConnexionView, DeconnexionView, TableauDeBordView,
-    DetailEntreeView, CreerEntreeView, ModifierEntreeView, SupprimerEntreeView, ThematiquesView, SupprimerCategorieView
+    DetailEntreeView, CreerEntreeView, ModifierEntreeView, SupprimerEntreeView,
+    ThematiquesView, SupprimerCategorieView, ModifierPhotoProfilView
 )
 
 urlpatterns = [
@@ -9,6 +10,7 @@ urlpatterns = [
     path('connexion/', ConnexionView.as_view(), name='connexion'),
     path('deconnexion/', DeconnexionView.as_view(), name='deconnexion'),
     path('tableau-de-bord/', TableauDeBordView.as_view(), name='tableau-de-bord'),
+    path('profil/photo/', ModifierPhotoProfilView.as_view(), name='profil-photo'),
 
     # entrees CRUD
     path('entree/creer/', CreerEntreeView.as_view(), name='entree-creer'),

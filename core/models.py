@@ -24,14 +24,24 @@ class Entry(models.Model):
     date_publication = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now=True)
     image_preuve = models.ImageField(upload_to='preuves/', blank=True, null=True)
+    photo_profil_auteur = models.ImageField(upload_to='photos_profil/', blank=True, null=True)
+
 
     class Meta:
-        verbose_name = "Entree"
-        verbose_name_plural = "Entrees"
+        verbose_name = "Entree" 
+        verbose_name_plural = "Entrees" 
         ordering = ['-date_publication']
 
     def __str__(self):
         return f"{self.titre} par {self.auteur.username}"   
-        
 
-        
+class Profile(models.Model):
+    utilisateur = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    photo = models.ImageField(upload_to='photos_profil/', blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Profil"
+        verbose_name_plural = "Profils"
+
+    def __str__(self):
+        return f"Profil de {self.utilisateur.username}"

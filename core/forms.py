@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Entry, Category
+from .models import Entry, Category, Profile
 
 # Formulaire d'inscription 
 class FormulaireInscription(UserCreationForm):
@@ -48,4 +48,19 @@ class FormulaireCategorie(forms.ModelForm):
         labels = {
             'nom': 'Nom de la thematique',
         }           
+
+
+class FormulaireProfil(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['photo']
+        widgets = {
+            'photo': forms.ClearableFileInput(attrs={
+                'accept': 'image/*',
+                'class': 'profile-photo-input',
+            }),
+        }
+        labels = {
+            'photo': 'Photo de profil',
+        }
 
