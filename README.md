@@ -48,9 +48,18 @@ Trac-Actiivity/
 ├── core/                # Application principale
 │   ├── migrations/      # Migrations de base de données
 │   ├── templates/       # Templates HTML
+    ├   - `connexion.html` → Page de login
+        - `inscription.html` → Création de compte
+        - `tableau_de_bord.html` → Dashboard paginé des logs
+        - `creer_entree.html` → Formulaire de création
+        - `modifier_entree.html` → Modification (auteur uniquement)
+        - `supprimer_entree.html` → Confirmation de suppression
+        - `detail_entree.html` → Détail du log + image de preuve
+        - `thematiques.html` → Gestion des thématiques
 │   └── models.py        # Modèles de données
 ├── media/               # Fichiers uploadés
 ├── templates/           # Templates globaux
+├   - `base.html         # base.htmlTemplate parent (navbar, footer, structure commune)
 ├── manage.py            # Gestionnaire Django
 └── requirements.txt     # Dépendances
 ```

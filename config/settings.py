@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-^bmkn7-*xk)pj=ma59$6j((d(+g5)02q2$*yk4g++o=diezw4&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', 'testserver']
 
 
 # Application definition
@@ -77,8 +77,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'journal_db',        
-        'USER': 'root',         
-        'PASSWORD': 'passer123',        
+        'USER': 'tracuser',         
+        'PASSWORD': 'Trac@2026#',        
         'HOST': 'localhost',
         'PORT': '3306',
     }

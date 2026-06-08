@@ -64,13 +64,8 @@ class TableauDeBordView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Entry
     template_name = 'tableau_de_bord.html'
     context_object_name = 'entrees'
-    paginate_by = 6
-    # photo de profil de l'utilisateur connecté dans le tableau de bord
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['photo_profil'] = self.request.user.profile.photo.url if hasattr(self.request.user, 'profile') and self.request.user.profile.photo else None
-        return context
-    
+    paginate_by = 3
+
 
     def test_func(self):
         return self.request.user.is_authenticated
@@ -87,6 +82,10 @@ class TableauDeBordView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
+        profile = getattr(user, 'profile', None)
+        context['photo_profil'] = profile.photo.url if profile and profile.photo else None
+    
         toutes_entrees = Entry.objects.filter(auteur=self.request.user)
         entrees_ce_mois = toutes_entrees.filter(
             date_publication__year=timezone.now().year,
@@ -105,7 +104,6 @@ class TableauDeBordView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         context['auteur_active'] = self.request.GET.get('auteur')
         context['afficher_pagination'] = context['paginator'].count >= self.paginate_by
         return context
-
 
 class DetailEntreeView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     login_url = '/connexion/'
